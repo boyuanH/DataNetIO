@@ -33,6 +33,21 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="StructDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MD5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ADOConnection.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLConnection.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TxtFileIO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataNetIO.cpp">
@@ -42,6 +57,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MD5.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ADOConnection.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLConnection.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TxtFileIO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

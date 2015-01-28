@@ -52,7 +52,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -101,19 +101,28 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ADOConnection.h" />
     <ClInclude Include="DataNetIO.h" />
     <ClInclude Include="DataNetIODlg.h" />
+    <ClInclude Include="MD5.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StructDef.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TxtFileIO.h" />
+    <ClInclude Include="XMLConnection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ADOConnection.cpp" />
     <ClCompile Include="DataNetIO.cpp" />
     <ClCompile Include="DataNetIODlg.cpp" />
+    <ClCompile Include="MD5.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TxtFileIO.cpp" />
+    <ClCompile Include="XMLConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DataNetIO.rc" />
