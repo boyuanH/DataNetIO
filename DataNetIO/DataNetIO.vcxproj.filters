@@ -48,6 +48,15 @@
     <ClInclude Include="TxtFileIO.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DlgMainpage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DbConf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgWaiting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataNetIO.cpp">
@@ -69,6 +78,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TxtFileIO.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMainpage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DbConf.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgWaiting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

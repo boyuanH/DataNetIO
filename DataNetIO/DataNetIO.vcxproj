@@ -104,6 +104,9 @@
     <ClInclude Include="ADOConnection.h" />
     <ClInclude Include="DataNetIO.h" />
     <ClInclude Include="DataNetIODlg.h" />
+    <ClInclude Include="DbConf.h" />
+    <ClInclude Include="DlgMainpage.h" />
+    <ClInclude Include="DlgWaiting.h" />
     <ClInclude Include="MD5.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -116,6 +119,9 @@
     <ClCompile Include="ADOConnection.cpp" />
     <ClCompile Include="DataNetIO.cpp" />
     <ClCompile Include="DataNetIODlg.cpp" />
+    <ClCompile Include="DbConf.cpp" />
+    <ClCompile Include="DlgMainpage.cpp" />
+    <ClCompile Include="DlgWaiting.cpp" />
     <ClCompile Include="MD5.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -136,4 +142,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="DataNetIO.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

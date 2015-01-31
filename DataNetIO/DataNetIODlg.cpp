@@ -7,10 +7,13 @@
 #include "DataNetIODlg.h"
 #include "afxdialogex.h"
 #include "TxtFileIO.h"
+#include "StructDef.h"
+#include "XMLConnection.h"
 #include "MD5.h"
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "DlgMainpage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,12 +38,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
-{
+CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD){
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
+void CAboutDlg::DoDataExchange(CDataExchange* pDX){
 	CDialogEx::DoDataExchange(pDX);
 }
 
@@ -53,13 +54,11 @@ END_MESSAGE_MAP()
 
 
 CDataNetIODlg::CDataNetIODlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CDataNetIODlg::IDD, pParent)
-{
+	: CDialogEx(CDataNetIODlg::IDD, pParent){
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CDataNetIODlg::DoDataExchange(CDataExchange* pDX)
-{
+void CDataNetIODlg::DoDataExchange(CDataExchange* pDX){
 	CDialogEx::DoDataExchange(pDX);
 }
 
@@ -67,13 +66,14 @@ BEGIN_MESSAGE_MAP(CDataNetIODlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_OK, &CDataNetIODlg::OnBnClickedButtonOk)
+	ON_BN_CLICKED(IDC_BUTTON_CANCLE, &CDataNetIODlg::OnBnClickedButtonCancle)
 END_MESSAGE_MAP()
 
 
 // CDataNetIODlg 消息处理程序
 
-BOOL CDataNetIODlg::OnInitDialog()
-{
+BOOL CDataNetIODlg::OnInitDialog(){
 	CDialogEx::OnInitDialog();
 
 	// 将“关于...”菜单项添加到系统菜单中。
@@ -81,6 +81,8 @@ BOOL CDataNetIODlg::OnInitDialog()
 	// IDM_ABOUTBOX 必须在系统命令范围内。
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
+
+	ModifyStyleEx(WS_EX_TOOLWINDOW, WS_EX_APPWINDOW);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != NULL)
@@ -102,12 +104,15 @@ BOOL CDataNetIODlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-	CTxtFileIO cio(_T("E:\\bb\\as.txt"));
+
+	xmlConn.initXML(LOC_LOGIN);
+/*	CTxtFileIO cio(_T("E:\\bb\\as.txt"));
 	CString textA(_T("BOOL APIENTRY DllMain(HANDLE hModule, DWORD dwReason, void* lpReserved){"));
 	CString textB;
 	int iT = 0;
 	cio.writeALine(textA);
 	cio.closeIO();
+*/
 /*	CString str(_T("E:\\bb\\as.txt"));
 	
 	CString mystr;
@@ -141,8 +146,7 @@ BOOL CDataNetIODlg::OnInitDialog()
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
-void CDataNetIODlg::OnSysCommand(UINT nID, LPARAM lParam)
-{
+void CDataNetIODlg::OnSysCommand(UINT nID, LPARAM lParam){
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
 		CAboutDlg dlgAbout;
@@ -158,8 +162,7 @@ void CDataNetIODlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  来绘制该图标。对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。
 
-void CDataNetIODlg::OnPaint()
-{
+void CDataNetIODlg::OnPaint(){
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // 用于绘制的设备上下文
@@ -185,8 +188,77 @@ void CDataNetIODlg::OnPaint()
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
 //显示。
-HCURSOR CDataNetIODlg::OnQueryDragIcon()
-{
+HCURSOR CDataNetIODlg::OnQueryDragIcon(){
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CDataNetIODlg::OnBnClickedButtonOk(){
+	// TODO: 在此添加控件通知处理程序代码
+
+	HRESULT hr;
+	CString inputUsername,inputPassword;
+	GetDlgItem(IDC_EDIT_LOGINUSER)->SetWindowTextW(_T("system"));
+	GetDlgItem(IDC_EDIT_LOGINPSW)->SetWindowTextW(_T("system"));
+
+	GetDlgItem(IDC_EDIT_LOGINUSER)->GetWindowTextW(inputUsername);
+	GetDlgItem(IDC_EDIT_LOGINPSW)->GetWindowTextW(inputPassword);
+	if (inputUsername.IsEmpty()){
+		MessageBoxW(_T("请输入用户名"));
+		GetDlgItem(IDC_EDIT_LOGINUSER)->SetWindowTextW(_T(""));
+		GetDlgItem(IDC_EDIT_LOGINPSW)->SetWindowTextW(_T(""));
+		return;
+	}
+	CMD5 md5;
+	md5.update(inputPassword);
+	CString psw = md5.toCString();
+	//check username
+	BOOL isUser = FALSE;BOOL isAdmin= FALSE;
+	MSXML2::IXMLDOMNode* pRoot = NULL;
+	MSXML2::IXMLDOMNodeList* pNodeUsers = NULL;
+	CHK_HR_RETURN(xmlConn.getRoot(pRoot,_T("Persons")))
+	CHK_HR_RETURN(pRoot->selectNodes(_T("User"),&pNodeUsers))
+	MSXML2::IXMLDOMNode* pNodeUser = NULL;
+	MSXML2::IXMLDOMNode* pNode = NULL;
+	BSTR bst;
+	while(pNodeUsers->nextNode(&pNodeUser) == S_OK){
+		CHK_HR_RETURN(pNodeUser->selectSingleNode(_T("LoginName"),&pNode))
+		CHK_HR_RETURN(pNode->get_text(&bst))
+		if (bst == inputUsername){
+			isUser = TRUE;
+			CHK_HR_RETURN(pNode->get_nextSibling(&pNode))
+			CHK_HR_RETURN(pNode->get_text(&bst))
+			if (psw == bst){
+				MSXML2::IXMLDOMElement *pElement = NULL;
+				pNodeUser->QueryInterface(__uuidof(MSXML2::IXMLDOMElement), (void **)&pElement);
+				VARIANT var;var.vt = VT_BSTR;VariantInit(&var);
+				bst = _T("LoginType");
+				CHK_HR_RETURN(pElement->getAttribute(bst,&var))
+				bst = _T("Admin");
+				if ((_bstr_t)(bst) == (_bstr_t)(var.bstrVal)){
+					isAdmin = TRUE;
+				}
+				VariantClear(&var);
+			} 
+			else{
+				MessageBoxW(_T("密码错误，请重新输入"));
+				GetDlgItem(IDC_EDIT_LOGINPSW)->SetWindowTextW(_T(""));	
+				return;
+			}
+		}
+	}
+	if (!isUser){
+		MessageBoxW(_T("用户不存在,请重新输入"));
+		GetDlgItem(IDC_EDIT_LOGINUSER)->SetWindowTextW(_T(""));
+		GetDlgItem(IDC_EDIT_LOGINPSW)->SetWindowTextW(_T(""));
+		return;
+	}
+	//SysFreeString(bst);bst = NULL;
+	CDlgMainpage mdlg(isAdmin,this);
+	mdlg.DoModal();
+	CDialogEx::OnOK();
+}
+
+void CDataNetIODlg::OnBnClickedButtonCancle(){
+	// TODO: 在此添加控件通知处理程序代码
+	CDialogEx::OnCancel();
+}

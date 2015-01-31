@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "DataNetIO.h"
 #include "DataNetIODlg.h"
+#include "DlgMainpage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -31,6 +31,7 @@ private:
 	_ConnectionPtr m_pConnection;//数据库连接指针
 	_CommandPtr	m_pCommand;//命令指针
 	std::vector<_ParameterPtr> m_Paras;//存储过程的参数集
+	_ParameterPtr para;
 
 private:
 	DatabaseInfo m_Databaseinfo;

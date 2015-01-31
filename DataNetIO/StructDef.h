@@ -19,6 +19,7 @@ struct FileUint{
 
 struct OutUnit{
 	CString departName;
+	CString departID;
 	BOOL isDepartment;	
 	std::vector<FileUint> fileEle;
 };
@@ -30,14 +31,20 @@ struct OutputInfo{
 	std::vector<OutUnit> outputEle;
 };
 
+struct Inputs{
+	CString theFolderName;
+	CString theFileName;
+};
+
 #define div_sign "********************************"
-#define LOC_DATABASE	_T("conf\\database.xml")
-#define LOC_LOGIN		_T("conf\\itest.xml")
-#define LOC_IOLOG		_T("conf\\IOLog.xml")
-#define LOC_FILTERLOG	_T("conf\\Filter.xml")
+#define LOC_DATABASE	_T("E:\\confs\\database.xml")
+#define LOC_LOGIN		_T("E:\\confs\\user.xml")
+#define LOC_IOLOG		_T("E:\\confs\\IOLog.xml")
+#define LOC_FILTERLOG	_T("E:\\confs\\Filter.txt")
 
 //com组件清理与检测
 #define CHK_HR_RETURN(stmt)        if (FAILED(stmt)) return; 
+#define CHK_HR_RETURNFALSE(stmt)        if (FAILED(stmt)) return FALSE; 
 #define CHK_HR_RETURNERR(stmt)        if (FAILED(stmt)) return E_FAIL; 
 #define CHK_HR(stmt)        do { hr=(stmt); if (FAILED(hr)) goto CleanUp; } while(0)
 #define SAFE_RELEASE(p)     do { if ((p)) { (p)->Release(); (p) = NULL; } } while(0)

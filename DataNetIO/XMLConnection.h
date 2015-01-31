@@ -9,7 +9,8 @@ public:
 public:
 	HRESULT initXML();
 	HRESULT initXML(CString filePath);
-	HRESULT getRoot(MSXML2::IXMLDOMNode* pRoot,CString rootName);
+	HRESULT getRoot(MSXML2::IXMLDOMNode* &pRoot,CString rootName);
+	MSXML2::IXMLDOMDocument* getXMLDOC();
 	void exitXML();
 private:
 	CString m_filePath;

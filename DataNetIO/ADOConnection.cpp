@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ADOConnection.h"
 
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -16,14 +17,13 @@ CADOConnection::CADOConnection(DatabaseInfo info){
 }
 
 CADOConnection:: ~CADOConnection(){
-	ExitConnect();
+	//ExitConnect();
 }
 
 HRESULT CADOConnection::OnInitAdo(){
-	HRESULT hr;
+	HRESULT hr = S_OK;
 	::CoInitialize(NULL);
-	try
-	{
+	try{
 		m_pConnection.CreateInstance("ADODB.Connection");		
 		_bstr_t strConnect;
 		strConnect = _T("Provider=SQLOLEDB.1;Persist Security Info=False");
@@ -31,11 +31,9 @@ HRESULT CADOConnection::OnInitAdo(){
 								+_T(";Initial Catalog=") + m_Databaseinfo.database 
 								+_T(";User ID=") + m_Databaseinfo.username 
 								+_T(";Password=") + m_Databaseinfo.password;
-		m_pConnection->Open(strConnect,"","",adModeUnknown);
-		hr = S_OK;
+		CHK_HR_RETURNERR(m_pConnection->Open(strConnect,"","",adModeUnknown))		
 	}
-	catch(_com_error e)
-	{
+	catch(_com_error e){
 		CString str;
 		str.Format(_T("%s"),e.ErrorMessage());
 		AfxMessageBox(str);
@@ -155,10 +153,11 @@ HRESULT CADOConnection::ExecuteProc(CString procName){
 			OnInitAdo();
 		m_pCommand->CommandType = adCmdStoredProc;  
 		m_pCommand->CommandText  = (_bstr_t)(procName); 
-		for (size_t i = 0;i < m_Paras.capacity();i++)
+		for (size_t i = 0;i < m_Paras.size();i++)
 		{
 			m_pCommand->Parameters->Append(m_Paras[i]);
 		}
+
 		m_pCommand->Execute(NULL,NULL,adCmdStoredProc);
 		hr = S_OK;
 	}
@@ -172,15 +171,14 @@ HRESULT CADOConnection::ExecuteProc(CString procName){
 }
 
 HRESULT CADOConnection::addParas(CString name, DataTypeEnum type, ParameterDirectionEnum direction, long tsize, const _variant_t &tvalue){
-	HRESULT hr;
+	HRESULT hr = S_OK;
 	try{
 		if ( NULL == m_pCommand ){
 			if(m_pConnection==NULL)
 				OnInitAdo();
 			m_pCommand.CreateInstance( __uuidof(Command));
 			m_pCommand->ActiveConnection = m_pConnection;
-		}
-		_ParameterPtr para;
+		}		
 		para.CreateInstance(_uuidof(Parameter));
 		para = m_pCommand->CreateParameter((_bstr_t)name,type,direction,tsize,tvalue);
 		m_Paras.push_back(para);

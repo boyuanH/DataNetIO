@@ -53,7 +53,7 @@ HRESULT CXMLConnection::initXML(){
 	return hr;
 }
 
-HRESULT CXMLConnection::getRoot(MSXML2::IXMLDOMNode* pRoot,CString rootName){
+HRESULT CXMLConnection::getRoot(MSXML2::IXMLDOMNode* &pRoot,CString rootName){
 	MSXML2::IXMLDOMNode* pnode = NULL;
 	if (NULL == pXMLDoc)
 		initXML();
@@ -62,12 +62,20 @@ HRESULT CXMLConnection::getRoot(MSXML2::IXMLDOMNode* pRoot,CString rootName){
 	HRESULT hr = pXMLDoc->selectSingleNode(bstr,&pnode);
 	SysFreeString(bstr);
 	pRoot = pnode;
-	pnode->Release();
-	return hr;
+//	pnode->Release();
+	if (pRoot!=NULL){
+		return S_OK;
+	}else{
+		return E_FAIL;
+	}	
 }
 
 void CXMLConnection::exitXML(){
 	if (pXMLDoc != NULL)
 		pXMLDoc->Release();
 	CoUninitialize();	
+}
+
+MSXML2::IXMLDOMDocument* CXMLConnection::getXMLDOC(){
+	return pXMLDoc;
 }
