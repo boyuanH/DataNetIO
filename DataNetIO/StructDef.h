@@ -32,6 +32,7 @@ struct OutputInfo{
 };
 
 struct Inputs{
+	CString theFilePath;
 	CString theFolderName;
 	CString theFileName;
 };
@@ -41,6 +42,7 @@ struct Inputs{
 #define LOC_LOGIN		_T("E:\\confs\\user.xml")
 #define LOC_IOLOG		_T("E:\\confs\\IOLog.xml")
 #define LOC_FILTERLOG	_T("E:\\confs\\Filter.txt")
+#define LOC_FILTERNOR	_T("E:\\confs\\")
 
 //com组件清理与检测
 #define CHK_HR_RETURN(stmt)        if (FAILED(stmt)) return; 

@@ -5,10 +5,17 @@
 #include "DataNetIO.h"
 #include "DlgMainpage.h"
 #include "afxdialogex.h"
+#include "TxtFileIO.h"
 #include "DbConf.h"
+#include "StructDef.h"
 #include "ADOConnection.h"
 #include "DlgWaiting.h"
+#include <iostream>
+#include <fstream>
+#include <string>
 
+using namespace std;
+using std::ifstream;
 // CDlgMainpage 对话框
 
 IMPLEMENT_DYNAMIC(CDlgMainpage, CDialogEx)
@@ -159,7 +166,77 @@ void CDlgMainpage::OnDataInput(){
 	//2对每个文件进行过滤，共有3个步骤
 	if (_inp.size()>0){
 		if (inputFileCheck(_inp)){
-			int t = _inp.size();
+			//文件过滤，打开文件后，依次读取每一行，如果这一行有中文字符，写入到过滤文件中去，
+			//果没有就写入到文件名（1）中，最后删除原文件，把该文件改名
+			for (int i = 0;i<_inp.size();i++)
+			{
+// 				ifstream ifnor;
+// 				ifnor.open(LOC_FILTERNOR+_inp[i].theFileName,ios::binary|ios::in|ios::out);
+// 				ifstream iffil;
+// 				iffil.open(_inp[i].theFilePath,ios::binary|ios::in|ios::out);
+				CTxtFileIO cioNor(_T("E:\\confs\\operation.csv"));
+				CTxtFileIO cioFil(LOC_FILTERLOG);
+ 				ifstream ifs;
+				ifs.open(_inp[i].theFilePath,ios::binary|ios::in|ios::out);
+				string s;
+				int temp = 0;
+				int temple = 0x80808080;
+				while (getline(ifs,s))
+				{
+					int len = s.length();		
+					char a[1024] ={0x00};
+					s.copy(a,s.length()-1);
+					int ia[1024] = {0x00};
+					memcpy(ia,a,len-1);
+					int coun = 0;BOOL flag = TRUE;
+					CString tmpCstr(s.c_str());
+					while (ia[coun] != 0x00)
+					{		
+						temp = ia[coun] & temple;
+						coun++;
+						if ((temp) != 0x00){
+							// 中文字符,输出，退出该句循环
+							flag = FALSE;
+							cioFil.writeALine(tmpCstr);
+							break;
+						}						
+					}
+					if (TRUE == flag){
+						cioNor.writeALine(tmpCstr);
+					}
+				}
+
+/*	CString str(_T("E:\\bb\\as.txt"));
+	
+	CString mystr;
+	int te = 0;
+	while (cio.readNextLine(mystr))
+	{
+		te++;
+	}
+
+	ifstream ifs;
+	ifs.open(str,ios::binary|ios::in|ios::out);
+	string s;
+	int temp = 0;
+	int temple = 0x80808080;
+	int pTemple[1] = {0x80808080};
+	char cTemple[4]={0x80,0x80,0x80,0x80};
+	char res[4] = {0xcc,0xcc,0xcc,0xcc};
+	while (getline(ifs,s))
+	{		
+		int len = s.length();		
+		char a[1024] ={0x00};
+		s.copy(a,s.length()-1);
+		int ia[1024] = {0x00};
+		memcpy(ia,a,len-1);
+		temp = ia[0] & temple;				
+		temp++;
+	}
+	
+*/
+			}
+
 		}else{
 			MessageBoxW(_T("文件夹内容错误"));
 			return ;
@@ -441,6 +518,7 @@ void CDlgMainpage::findAllFile(const CString& foldPath,std::vector<Inputs>& inp)
 				int npos = _cstrTmp.Find(_T("\\"));
 				_inp.theFolderName = _cstrTmp.Left(npos);
 				_inp.theFolderName.MakeReverse();
+				_inp.theFilePath = ff.GetFilePath();
 				inp.push_back(_inp);
 			}
 		} 
