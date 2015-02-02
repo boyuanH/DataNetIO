@@ -13,6 +13,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "time.h"
+#include "StaffMana.h"
 
 using namespace std;
 using std::ifstream;
@@ -138,6 +140,10 @@ void CDlgMainpage::OnStart(){
 
 void CDlgMainpage::OnDataInput(){
 	//csv2sql
+	if (S_OK != getConfigFromXML()){
+		MessageBoxW(_T("Failed on get Config File From XML"));
+		return ;
+	}	
 	//0 获取路径
 	TCHAR	szFolderPath[MAX_PATH] = {0};
 	CString strFolderPath;	
@@ -164,25 +170,32 @@ void CDlgMainpage::OnDataInput(){
 	findAllFile(strFolderPath,_inp);
 
 	//2对每个文件进行过滤，共有3个步骤
+
 	if (_inp.size()>0){
 		if (inputFileCheck(_inp)){
 			//文件过滤，打开文件后，依次读取每一行，如果这一行有中文字符，写入到过滤文件中去，
 			//果没有就写入到文件名（1）中，最后删除原文件，把该文件改名
-			for (int i = 0;i<_inp.size();i++)
-			{
+			for (int i = 0;i<_inp.size();i++){
+				clock_t start, finish;
+				start = clock();
+				double  duration;
 // 				ifstream ifnor;
 // 				ifnor.open(LOC_FILTERNOR+_inp[i].theFileName,ios::binary|ios::in|ios::out);
 // 				ifstream iffil;
 // 				iffil.open(_inp[i].theFilePath,ios::binary|ios::in|ios::out);
-				CTxtFileIO cioNor(_T("E:\\confs\\operation.csv"));
+				CTxtFileIO cioNor(LOC_FILTERNOR);
+				//temp.txt内容长度置零				
+				CreateFile(LOC_FILTERNOR,GENERIC_READ| GENERIC_WRITE, 0,NULL,  
+					TRUNCATE_EXISTING,NULL,NULL);
 				CTxtFileIO cioFil(LOC_FILTERLOG);
+				cioFil.writeALine(_T("*******************************"));
+				cioFil.writeALine(_inp[i].theFileName);
  				ifstream ifs;
 				ifs.open(_inp[i].theFilePath,ios::binary|ios::in|ios::out);
 				string s;
 				int temp = 0;
 				int temple = 0x80808080;
-				while (getline(ifs,s))
-				{
+				while (getline(ifs,s)){
 					int len = s.length();		
 					char a[1024] ={0x00};
 					s.copy(a,s.length()-1);
@@ -190,8 +203,7 @@ void CDlgMainpage::OnDataInput(){
 					memcpy(ia,a,len-1);
 					int coun = 0;BOOL flag = TRUE;
 					CString tmpCstr(s.c_str());
-					while (ia[coun] != 0x00)
-					{		
+					while (ia[coun] != 0x00){		
 						temp = ia[coun] & temple;
 						coun++;
 						if ((temp) != 0x00){
@@ -206,50 +218,45 @@ void CDlgMainpage::OnDataInput(){
 					}
 				}
 
-/*	CString str(_T("E:\\bb\\as.txt"));
-	
-	CString mystr;
-	int te = 0;
-	while (cio.readNextLine(mystr))
-	{
-		te++;
-	}
+				finish = clock();
+				CString strrrr;
+				strrrr.Format(_T("%d"),(finish - start) );
+				MessageBoxW(strrrr);
 
-	ifstream ifs;
-	ifs.open(str,ios::binary|ios::in|ios::out);
-	string s;
-	int temp = 0;
-	int temple = 0x80808080;
-	int pTemple[1] = {0x80808080};
-	char cTemple[4]={0x80,0x80,0x80,0x80};
-	char res[4] = {0xcc,0xcc,0xcc,0xcc};
-	while (getline(ifs,s))
-	{		
-		int len = s.length();		
-		char a[1024] ={0x00};
-		s.copy(a,s.length()-1);
-		int ia[1024] = {0x00};
-		memcpy(ia,a,len-1);
-		temp = ia[0] & temple;				
-		temp++;
-	}
-	
-*/
+				//写入数据库
+				CString procName=_T("[dbo].[csv2sql]");
+				int inputType = 0;
+				if (_inp[i].theFileName == _T("operation.csv")){
+					inputType = 1;
+				} 
+				else if (_inp[i].theFileName == _T("alarm.csv")){
+					inputType = 2;
+				} 
+				else{
+					inputType = 3;
+				}
+
+				CADOConnection m_adoConnection(m_dbinfo);	
+				CHK_HR_RETURN(m_adoConnection.OnInitAdo())
+					//CHK_HR_RETURN(m_adoConnection.addParas(_T("filepath"),adVarWChar,adParamInput,_inp[i].theFilePath.GetLength()+1,(_variant_t)(_inp[i].theFilePath)))
+					CHK_HR_RETURN(m_adoConnection.addParas(_T("filepath"),adVarWChar,adParamInput,sizeof(LOC_FILTERNOR)/sizeof(TCHAR),(_variant_t)(LOC_FILTERNOR)))
+					CHK_HR_RETURN(m_adoConnection.addParas(_T("inputType"),adInteger,adParamInput,sizeof(int),(_variant_t)(inputType)))
+					CHK_HR_RETURN(m_adoConnection.addParas(_T("departmentID"),adInteger,adParamInput,sizeof(int),(_variant_t)(_ttoi(_inp[i].theFolderName))))
+					CHK_HR_RETURN(m_adoConnection.addParas(_T("UID"),adVarWChar,adParamInput,m_dbinfo.username.GetLength()+1,(_variant_t)(m_dbinfo.username)))
+					CHK_HR_RETURN(m_adoConnection.addParas(_T("UPSW"),adVarWChar,adParamInput,m_dbinfo.password.GetLength()+1,(_variant_t)(m_dbinfo.password)))
+					//		if (m_adoConnection.ExecuteProc(procName)){
+					//LOG文件中添加记录		
+					//				}
+					m_adoConnection.ExitConnect();
+
 			}
-
 		}else{
 			MessageBoxW(_T("文件夹内容错误"));
 			return ;
-		}		
+		}
+
+		MessageBoxW(_T("结束输入"));
 	}
-
-	//依次打开文件，进行文件过滤
-	for (int i = 0; i < _inp.size(); i++){
-		
-	}
-
-	//3循环遍历进入数据库
-
 }
 
 void CDlgMainpage::OnDataOutput(){
@@ -295,7 +302,6 @@ void CDlgMainpage::OnDataOutput(){
 		::CoTaskMemFree(lpidlBrowse);  
 	}  
 	//对文件夹的非法字符检查 空格，下划线，破折号都是非法字符
-
 	OutputInfo outInfo;
 	outInfo.info = m_dbinfo;
 	outInfo.startDateTime = t1;
@@ -305,7 +311,6 @@ void CDlgMainpage::OnDataOutput(){
 	outInfo.outputEle = outputEle;
 	CDlgWaiting dlgWaiting(outInfo);
 	dlgWaiting.DoModal();
-
 }
 
 void CDlgMainpage::OnReLogin(){
@@ -325,6 +330,8 @@ void CDlgMainpage::OnDBConfig(){
 
 void CDlgMainpage::OnStaffMana(){
 	//软件使用人员管理
+	CStaffMana staffmanDlg;
+	staffmanDlg.DoModal();
 }
 
 void CDlgMainpage::OnAbout(){
@@ -426,19 +433,18 @@ HRESULT CDlgMainpage::getConfigFromXML(){
 	while(S_OK ==( pinfos->nextNode(&pinfo))){
 		CHK_HR_RETURNERR(pinfo->selectSingleNode(_T("Server"),&pinfoNode))
 		CHK_HR_RETURNERR(pinfoNode->get_text(&bst))
-		m_dbinfo.server = bst;		
+		m_dbinfo.server.Empty();m_dbinfo.server = bst;		
 		CHK_HR_RETURNERR(pinfo->selectSingleNode(_T("Catalog"),&pinfoNode))
 		CHK_HR_RETURNERR(pinfoNode->get_text(&bst))
-		m_dbinfo.database = bst;
+		m_dbinfo.database.Empty();m_dbinfo.database = bst;	
 		CHK_HR_RETURNERR(pinfo->selectSingleNode(_T("UserID"),&pinfoNode))
 		CHK_HR_RETURNERR(pinfoNode->get_text(&bst))
-		m_dbinfo.username = bst;
+		m_dbinfo.username.Empty();m_dbinfo.username = bst;	
 		CHK_HR_RETURNERR(pinfo->selectSingleNode(_T("Password"),&pinfoNode))
 		CHK_HR_RETURNERR(pinfoNode->get_text(&bst))
-		m_dbinfo.password = bst;
+		m_dbinfo.password.Empty();m_dbinfo.password = bst;	
 	}	
 	xmlConn.exitXML();
-
 	return S_OK;  // return TRUE unless you set the focus to a control
 }
 
@@ -527,8 +533,12 @@ void CDlgMainpage::findAllFile(const CString& foldPath,std::vector<Inputs>& inp)
 }
 
 BOOL CDlgMainpage::inputFileCheck(const std::vector<Inputs>& inp){
+
 	for (int i = 0;i<inp.size();i++){
 		CString tmpA = inp[i].theFolderName;
+		if (inp[i].theFolderName.SpanIncluding(_T("1234567890")) != inp[i].theFolderName){			
+			return FALSE;
+		}
 		for (int j=0;j<inp.size();j++){
 			if ((tmpA == inp[j].theFolderName) && (i != j)){
 				if (inp[i].theFileName == inp[j].theFileName){

@@ -24,6 +24,11 @@ struct OutUnit{
 	std::vector<FileUint> fileEle;
 };
 
+struct userUnit{
+	CString userName;
+	BOOL isAdmin;
+};
+
 struct OutputInfo{
 	HWND hWnd;
 	DatabaseInfo info;
@@ -41,8 +46,9 @@ struct Inputs{
 #define LOC_DATABASE	_T("E:\\confs\\database.xml")
 #define LOC_LOGIN		_T("E:\\confs\\user.xml")
 #define LOC_IOLOG		_T("E:\\confs\\IOLog.xml")
-#define LOC_FILTERLOG	_T("E:\\confs\\Filter.txt")
-#define LOC_FILTERNOR	_T("E:\\confs\\")
+#define LOC_FILTERLOG	_T("E:\\confs\\Filter.csv")
+#define LOC_FILTERNOR	_T("E:\\confs\\temp.csv")
+#define LOC_FILEERR		_T("E:\\confs\\Error.txt")
 
 //com组件清理与检测
 #define CHK_HR_RETURN(stmt)        if (FAILED(stmt)) return; 

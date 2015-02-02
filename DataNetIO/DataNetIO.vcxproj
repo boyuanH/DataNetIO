@@ -109,6 +109,7 @@
     <ClInclude Include="DlgWaiting.h" />
     <ClInclude Include="MD5.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="StaffMana.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StructDef.h" />
     <ClInclude Include="targetver.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="DlgMainpage.cpp" />
     <ClCompile Include="DlgWaiting.cpp" />
     <ClCompile Include="MD5.cpp" />
+    <ClCompile Include="StaffMana.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

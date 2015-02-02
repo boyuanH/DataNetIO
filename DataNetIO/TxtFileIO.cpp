@@ -65,9 +65,16 @@ BOOL CTxtFileIO::writeALine(const CString& cstrDe){
 	
 	CString m_cstr = cstrDe;
 	char *chr=new char[m_cstr.GetLength()+1];
+	memset(chr,0x00,m_cstr.GetLength()+1);
+	char charC[1024] = {0x00}; 
 	WideCharToMultiByte(CP_ACP,0,m_cstr.GetBuffer(),-1,chr,m_cstr.GetLength()+1,NULL,NULL);	
-	m_fs<<endl;
-	m_fs<<chr;	
+	WideCharToMultiByte(CP_ACP,0,m_cstr.GetBuffer(),-1,charC,m_cstr.GetLength()+1,NULL,NULL);	
+	if (!cstrDe.IsEmpty()){
+		m_fs<<endl;
+	}
+	//m_fs<<chr;
+	m_fs<<charC;
+	delete chr;
 	return TRUE;
 }
 
