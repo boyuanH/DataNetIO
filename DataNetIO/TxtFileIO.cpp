@@ -52,6 +52,7 @@ BOOL CTxtFileIO::readNextLog(CString& deCstr){
 			deCstr = deCstr + tems;
 		}
 	}
+	return flag;
 }
 
 BOOL CTxtFileIO::writeALog(const CString& cstrDe){

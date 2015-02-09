@@ -195,7 +195,7 @@ HCURSOR CDataNetIODlg::OnQueryDragIcon(){
 void CDataNetIODlg::OnBnClickedButtonOk(){
 	// TODO: 在此添加控件通知处理程序代码
 
-	HRESULT hr;
+	//HRESULT hr;
 	CString inputUsername,inputPassword;
 	GetDlgItem(IDC_EDIT_LOGINUSER)->SetWindowTextW(_T("system"));
 	GetDlgItem(IDC_EDIT_LOGINPSW)->SetWindowTextW(_T("system"));

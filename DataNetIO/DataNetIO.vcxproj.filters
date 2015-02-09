@@ -60,6 +60,9 @@
     <ClInclude Include="StaffMana.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AddStaff.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataNetIO.cpp">
@@ -93,6 +96,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="StaffMana.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AddStaff.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

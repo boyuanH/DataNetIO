@@ -101,6 +101,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddStaff.h" />
     <ClInclude Include="ADOConnection.h" />
     <ClInclude Include="DataNetIO.h" />
     <ClInclude Include="DataNetIODlg.h" />
@@ -117,6 +118,7 @@
     <ClInclude Include="XMLConnection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddStaff.cpp" />
     <ClCompile Include="ADOConnection.cpp" />
     <ClCompile Include="DataNetIO.cpp" />
     <ClCompile Include="DataNetIODlg.cpp" />
