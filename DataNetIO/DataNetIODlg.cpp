@@ -55,6 +55,9 @@ END_MESSAGE_MAP()
 
 CDataNetIODlg::CDataNetIODlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CDataNetIODlg::IDD, pParent){
+		if (pParent!=NULL){
+			pParent->ShowWindow(HIDE_WINDOW);
+		}
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 

@@ -15,6 +15,7 @@
 #include <string>
 #include "time.h"
 #include "StaffMana.h"
+#include "DataNetIODlg.h"
 
 using namespace std;
 using std::ifstream;
@@ -164,13 +165,12 @@ void CDlgMainpage::OnDataInput(){
 		::CoTaskMemFree(lpidlBrowse);  
 	}  
 	//如果取得的文件名不是日期，错误
-
+	if (strFolderPath.IsEmpty()){
+		return;
+	}
 	//1对文件夹进行遍历，建立待导入文件列表
 	std::vector<Inputs> _inp;
-	findAllFile(strFolderPath,_inp);
-
-	//2对每个文件进行过滤，共有3个步骤
-
+	findAllFile(strFolderPath,_inp);	
 	if (_inp.size()>0){
 		if (inputFileCheck(_inp)){
 			//文件过滤，打开文件后，依次读取每一行，如果这一行有中文字符，写入到过滤文件中去，
@@ -315,6 +315,8 @@ void CDlgMainpage::OnDataOutput(){
 
 void CDlgMainpage::OnReLogin(){
 	//该用户注销，重新进入登录界面
+	CDataNetIODlg dlg(this);
+	dlg.DoModal();
 }
 
 void CDlgMainpage::OnExit(){
